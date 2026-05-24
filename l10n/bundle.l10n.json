@@ -7,5 +7,6 @@
     "Background will be disabled.": "Background will be disabled.",
     "Configuration has been changed, click to apply.": "Configuration has been changed, click to apply.",
     "Apply and Reload": "Apply and Reload",
-    "Disable and Reload": "Disable and Reload"
+    "Disable and Reload": "Disable and Reload",
+    "Only local image files, local folders, file:// URIs, and data:image base64 sources are allowed. Internet image URLs are not supported.": "Only local image files, local folders, file:// URIs, and data:image base64 sources are allowed. Internet image URLs are not supported."
 }

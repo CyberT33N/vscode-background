@@ -15,6 +15,10 @@ import { PatchGenerator, TPatchGeneratorConfig } from './PatchGenerator';
  * 配置类型
  */
 type TConfigType = vscode.WorkspaceConfiguration & TPatchGeneratorConfig;
+type TPromptAction = {
+    title: string;
+    action: () => void | Promise<void>;
+};
 
 /**
  * 插件逻辑类
@@ -82,13 +86,18 @@ export class Background implements Disposable {
     public async showWelcome() {
         // 欢迎页
         const docDir = path.join(__dirname, '../../docs');
-        const docName = /^zh/.test(vscode.env.language) ? 'welcome.zh-CN.md' : 'welcome.md';
+        const localizedDocName = /^zh/.test(vscode.env.language) ? 'welcome.zh-CN.md' : 'welcome.md';
+        const localizedDocPath = path.join(docDir, localizedDocName);
+        const docPath = fs.existsSync(localizedDocPath) ? localizedDocPath : path.join(docDir, 'welcome.md');
 
         // welcome 内容
-        let content = await fs.promises.readFile(path.join(docDir, docName), ENCODING);
+        let content = await fs.promises.readFile(docPath, ENCODING);
         // 替换图片内联为base64
         content = content.replace(/\.\.\/images[^\")]+/g, (relativePath: string) => {
             const imgPath = path.join(vscodePath.extRoot, 'images', relativePath);
+            if (!fs.existsSync(imgPath)) {
+                return '';
+            }
 
             return (
                 `data:image/${path.extname(imgPath).slice(1) || 'png'};base64,` +
@@ -155,10 +164,27 @@ export class Background implements Disposable {
         });
     }
 
+    private ensureSupportedImageSources() {
+        const invalidSources = PatchGenerator.getUnsupportedImageSources(this.config);
+        if (!invalidSources.length) {
+            return true;
+        }
+
+        vscode.window.showErrorMessage(
+            l10n.t(
+                'Only local image files, local folders, file:// URIs, and data:image base64 sources are allowed. Internet image URLs are not supported.'
+            )
+        );
+        return false;
+    }
+
     public async applyPatch() {
         // 禁用时候，不处理
         if (!this.config.enabled) {
             return;
+        }
+        if (!this.ensureSupportedImageSources()) {
+            return false;
         }
 
         const scriptContent = PatchGenerator.create(this.config);
@@ -166,6 +192,9 @@ export class Background implements Disposable {
     }
 
     public previewPatch() {
+        if (!this.ensureSupportedImageSources()) {
+            return;
+        }
         const scriptContent = PatchGenerator.create(this.config);
         vsHelp.showMarkdown('```ts\n' + scriptContent + '\n```', 'preview-patch');
     }
@@ -207,7 +236,7 @@ export class Background implements Disposable {
                         action: () => this.showWelcome()
                     }
                 )
-                .then(confirm => {
+                .then((confirm: TPromptAction | undefined) => {
                     confirm?.action();
                 });
         }
@@ -222,7 +251,7 @@ export class Background implements Disposable {
 
         // 监听文件改变
         this.disposables.push(
-            vscode.workspace.onDidChangeConfiguration(async ex => {
+            vscode.workspace.onDidChangeConfiguration(async (ex: vscode.ConfigurationChangeEvent) => {
                 const hasChanged = ex.affectsConfiguration(EXTENSION_NAME);
                 if (!hasChanged) {
                     return;

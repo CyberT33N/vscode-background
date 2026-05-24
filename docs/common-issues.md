@@ -1,6 +1,6 @@
 # Common Issues
 
-[English](./common-issues.md) | [中文](./common-issues.zh-CN.md)
+[English](./common-issues.md)
 
 ## How it works
 
@@ -74,15 +74,15 @@ Whenever there is an extreme situation where vscode crashes, you can manually fi
 
 ## Prefer v1 default images?
 
-You can download the default images of v1 version [from here](https://github.com/shalldie/vscode-background/issues/106#issuecomment-392311967), or use the config below:
+If you want to keep using the default images from v1, download them locally first and reference them from your machine or convert them into `data:image` sources.
 
 ```json
 {
   "background.editor": {
     "images": [
-      "https://user-images.githubusercontent.com/9987486/40583669-d6189844-61c5-11e8-89e3-c52ad153da09.png",
-      "https://user-images.githubusercontent.com/9987486/40583670-d6478c9e-61c5-11e8-9551-6b55eacc7b8d.png",
-      "https://user-images.githubusercontent.com/9987486/40583671-d676c6e4-61c5-11e8-94cb-34ec4a12fa01.png"
+      "C:/Users/name/Pictures/v1-background-1.png",
+      "C:/Users/name/Pictures/v1-background-2.png",
+      "data:image/png;base64,<base64-data>"
     ]
   }
 }

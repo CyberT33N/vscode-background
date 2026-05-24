@@ -7,8 +7,6 @@ Different system paths and folders are supported in `images` now:
 ```json
 {
   "images": [
-    // online images, only `https` is allowed.
-    "https://hostname/online.jpg",
     // local images
     "file:///local/path/img.jpeg",
     "/home/xie/downloads/img.gif",
@@ -16,8 +14,8 @@ Different system paths and folders are supported in `images` now:
     "D:\\downloads\\images\\img.webp",
     // local folders
     "/home/xie/images",
-    // data URL
-    "data:image/*;base64,<base64-data>"
+    // data URL (image only)
+    "data:image/png;base64,<base64-data>"
   ]
 }
 ```
@@ -25,8 +23,6 @@ Different system paths and folders are supported in `images` now:
 ## More configurable sections
 
 Each section can be customized with features such as `custom images/styles`、`carousel`、`random display`...
-
-<img src="../images/containers.png" width="800" />
 
 ## Clear and concise configuration
 
@@ -45,8 +41,6 @@ Each section has independent configuration, see [README.md](https://github.com/s
 ## Quick Command
 
 Click the 「Background」 button on the right-bottom of statusbar, all commands of `background` will appear:
-
-<img width="660" src="../images/commands.png">
 
 ## No more warnings
 
@@ -82,15 +76,15 @@ v2, migrated to `background.editor`:
 
 ## Prefer v1 default images?
 
-You can download the default images of v1 version [from here](https://github.com/shalldie/vscode-background/issues/106#issuecomment-392311967), or use the config below:
+Download the default images from v1 to your machine first, then reference them as local files or convert them into `data:image` sources.
 
 ```json
 {
   "background.editor": {
     "images": [
-      "https://user-images.githubusercontent.com/9987486/40583669-d6189844-61c5-11e8-89e3-c52ad153da09.png",
-      "https://user-images.githubusercontent.com/9987486/40583670-d6478c9e-61c5-11e8-9551-6b55eacc7b8d.png",
-      "https://user-images.githubusercontent.com/9987486/40583671-d676c6e4-61c5-11e8-94cb-34ec4a12fa01.png"
+      "C:/Users/name/Pictures/v1-background-1.png",
+      "C:/Users/name/Pictures/v1-background-2.png",
+      "data:image/png;base64,<base64-data>"
     ]
   }
 }

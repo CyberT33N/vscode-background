@@ -8,9 +8,9 @@ import fs, { constants as fsConstants } from 'fs';
 import { tmpdir } from 'os';
 import path from 'path';
 
-import { _ } from '../utils';
 import { BACKGROUND_VER, ENCODING, VERSION } from '../utils/constants';
 import { vsc } from '../utils/vsc';
+import { replaceFileWithElevatedHelper } from './PatchFile';
 
 /**
  * css文件修改状态类型
@@ -34,7 +34,11 @@ export enum ECSSEditType {
 }
 
 /**
- * css 文件相关操作
+ * Legacy CSS patch file operations.
+ *
+ * This class exists for backwards compatibility with older installations. Like
+ * the workbench JS patch flow, privileged writes are narrowed to a short-lived
+ * external replace helper instead of elevating the full extension host.
  *
  * @deprecated
  * @export
@@ -83,11 +87,9 @@ export class CssFile {
     }
 
     /**
-     * 设置 css 文件内容
-     *
-     * @param {string} content
-     * @return {*}  {Promise<boolean>}
-     * @memberof CssFile
+     * Saves legacy CSS content with the same security posture as the main
+     * workbench patch flow: direct unprivileged write first, one-shot elevated
+     * replace helper only when the target path is protected.
      */
     public async saveContent(content: string): Promise<boolean> {
         if (!content || !content.length) {
@@ -114,15 +116,15 @@ export class CssFile {
             }
             const tempFilePath = await this.saveContentToTemp(content);
             try {
-                const mvcmd = process.platform === 'win32' ? 'move /Y' : 'mv -f';
-                const cmdarg = `${mvcmd} "${tempFilePath}" "${this.filePath}"`;
-                await _.sudoExec(cmdarg, { name: 'Visual Studio Code Background Extension' });
+                await replaceFileWithElevatedHelper(tempFilePath, this.filePath, {
+                    promptName: 'Visual Studio Code Background Extension'
+                });
                 return true;
             } catch (e: any) {
                 await vsc.window.showErrorMessage(e.message);
                 return false;
             } finally {
-                await fs.promises.rm(tempFilePath);
+                await fs.promises.rm(tempFilePath, { force: true });
             }
         }
     }

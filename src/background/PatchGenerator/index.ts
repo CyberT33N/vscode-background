@@ -2,6 +2,7 @@ import uglifyjs from 'uglify-js';
 
 import { _ } from '../../utils';
 import { AuxiliarybarPatchGenerator, AuxiliarybarPatchGeneratorConfig } from './PatchGenerator.auxiliarybar';
+import { findUnsupportedImageSources } from './PatchGenerator.base';
 import { ChecksumsPatchGenerator } from './PatchGenerator.checksums';
 import {
     EditorPatchGenerator,
@@ -23,6 +24,19 @@ export type TPatchGeneratorConfig = {
 } & LegacyEditorPatchGeneratorConfig;
 
 export class PatchGenerator {
+    public static getUnsupportedImageSources(options: TPatchGeneratorConfig) {
+        const editor = EditorPatchGenerator.mergeLegacyConfig(options, options.editor);
+        const configuredImages = [
+            editor.images,
+            options.sidebar?.images || [],
+            options.auxiliarybar?.images || [],
+            options.panel?.images || [],
+            options.fullscreen?.images || []
+        ];
+
+        return Array.from(new Set(configuredImages.flatMap(images => findUnsupportedImageSources(images))));
+    }
+
     public static create(options: TPatchGeneratorConfig) {
         const script = [
             // global

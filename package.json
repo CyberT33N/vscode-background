@@ -3,6 +3,19 @@
   "displayName": "background",
   "description": "Bring background images to your vscode",
   "version": "2.0.10",
+  "packageManager": "pnpm@11.2.2",
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "26.2.0",
+      "onFail": "error"
+    },
+    "packageManager": {
+      "name": "pnpm",
+      "version": "11.2.2",
+      "onFail": "error"
+    }
+  },
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "vscode:uninstall": "node ./out/uninstall",
@@ -22,7 +35,6 @@
   "engines": {
     "vscode": "^1.94.0"
   },
-  "icon": "images/logo.png",
   "categories": [
     "Other"
   ],
@@ -327,7 +339,7 @@
     "@types/vscode": "^1.94.0",
     "@typescript-eslint/eslint-plugin": "^8.50.0",
     "@typescript-eslint/parser": "^8.50.0",
-    "@vscode/vsce": "^3.7.1",
+    "@vscode/vsce": "~3.9.1",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",

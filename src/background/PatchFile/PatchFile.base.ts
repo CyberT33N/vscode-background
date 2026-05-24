@@ -3,9 +3,9 @@ import fs, { constants as fsConstants } from 'fs';
 import { tmpdir } from 'os';
 import path from 'path';
 
-import { _ } from '../../utils';
 import { BACKGROUND_VER, ENCODING, VERSION } from '../../utils/constants';
 import { vsc } from '../../utils/vsc';
+import { replaceFileWithElevatedHelper } from './PatchFile.privilegedReplace';
 
 export enum EFilePatchType {
     /**
@@ -23,7 +23,12 @@ export enum EFilePatchType {
 }
 
 /**
- * 文件 patch 操作
+ * Base abstraction for patchable VS Code workbench files.
+ *
+ * The normal path remains an unprivileged write directly to the target file.
+ * When that is not possible because the installation path is protected, the
+ * class escalates only the final replace step through a short-lived external
+ * helper process. This keeps the extension host itself unprivileged.
  *
  * @export
  * @abstract
@@ -69,6 +74,14 @@ export abstract class AbsPatchFile {
         return fs.promises.readFile(this.filePath, ENCODING);
     }
 
+    /**
+     * Persists patched workbench content.
+     *
+     * The method first attempts the smallest possible operation: a normal write
+     * as the current user. If the file is not writable, it falls back to a
+     * privileged replace helper that receives only the prepared temp file and is
+     * limited to a single allowlisted destination file.
+     */
     private async saveContentTo(filePath: string, content: string) {
         try {
             if (fs.existsSync(filePath)) {
@@ -91,28 +104,29 @@ export abstract class AbsPatchFile {
             if (result !== retry) {
                 return false;
             }
-            const tempFilePath = path.join(tmpdir(), `vscode-background-${randomUUID()}.temp`);
-            await fs.promises.writeFile(tempFilePath, content, ENCODING);
+            const tempFilePath = await this.writeContentToTempFile(content);
             try {
-                const mvcmd = process.platform === 'win32' ? 'move /Y' : 'mv -f';
-                const cmdarg = `${mvcmd} "${tempFilePath}" "${filePath}"`;
-                await _.sudoExec(cmdarg, { name: 'Background Extension' });
+                await replaceFileWithElevatedHelper(tempFilePath, filePath, {
+                    promptName: 'Background Extension'
+                });
                 return true;
             } catch (e: any) {
-                vsc.window.showErrorMessage(e.message, { title: 'Common Issue' }).then(confirm => {
-                    if (!confirm) {
-                        return;
-                    }
-                    const helpLink =
-                        'https://github.com/shalldie/vscode-background/blob/master/docs/common-issues.md#read-only-file-system';
-
-                    vsc!.env!.openExternal(vsc!.Uri.parse(helpLink));
-                });
+                vsc.window.showErrorMessage(e.message);
                 return false;
             } finally {
                 await fs.promises.rm(tempFilePath, { force: true });
             }
         }
+    }
+
+    /**
+     * Writes the fully prepared target content to a temporary file before the
+     * privileged replace helper is invoked.
+     */
+    private async writeContentToTempFile(content: string) {
+        const tempFilePath = path.join(tmpdir(), `vscode-background-${VERSION}-${randomUUID()}.temp`);
+        await fs.promises.writeFile(tempFilePath, content, ENCODING);
+        return tempFilePath;
     }
 
     protected async write(content: string): Promise<boolean> {

@@ -9,10 +9,8 @@ import { _ } from '../../utils';
 /**
 images 支持以下格式：
 
------- 网络图片 ------
-https://...
 ------ data URL ------
-data:image/*;base64,<base64-data>
+data:image/png;base64,<base64-data>
 
 ------ 本地目录、图片 ------
 file:///path/to/local/file
@@ -45,6 +43,62 @@ export function css(template: TemplateStringsArray, ...args: any[]) {
     }, '');
 }
 
+const dataImageSourcePattern = /^data:image\/[a-zA-Z0-9.+-]+;base64,/i;
+const namedSchemePattern = /^[a-z][a-z0-9+.-]*:/i;
+const remoteImageSourcePattern = /^[a-z][a-z0-9+.-]*:\/\//i;
+const networkPathPattern = /^(?:\\\\|\/\/)[^\\/]/;
+const windowsAbsolutePathPattern = /^[a-z]:[\\/]/i;
+
+export function isDataImageSource(imageSource: string) {
+    return dataImageSourcePattern.test(imageSource);
+}
+
+export function isRemoteImageSource(imageSource: string) {
+    return remoteImageSourcePattern.test(imageSource) && !imageSource.startsWith('file://');
+}
+
+export function isLocalFileUri(imageSource: string) {
+    try {
+        const parsed = new URL(imageSource);
+        return parsed.protocol === 'file:' && (!parsed.hostname.length || parsed.hostname === 'localhost');
+    } catch {
+        return false;
+    }
+}
+
+export function isSupportedImageSource(imageSource: string) {
+    if (!imageSource.length) {
+        return false;
+    }
+    if (networkPathPattern.test(imageSource)) {
+        return false;
+    }
+    if (windowsAbsolutePathPattern.test(imageSource)) {
+        return true;
+    }
+    if (isDataImageSource(imageSource)) {
+        return true;
+    }
+    if (imageSource.startsWith('file://')) {
+        return isLocalFileUri(imageSource);
+    }
+    if (imageSource.startsWith('data:')) {
+        return false;
+    }
+    if (namedSchemePattern.test(imageSource)) {
+        return false;
+    }
+    return !isRemoteImageSource(imageSource);
+}
+
+export function sanitizeConfiguredImages(images: string[] = []) {
+    return images.filter(isSupportedImageSource);
+}
+
+export function findUnsupportedImageSources(images: string[] = []) {
+    return images.filter(imageSource => !isSupportedImageSource(imageSource));
+}
+
 export class AbsPatchGenerator<T extends { images: string[] }> {
     protected config: T;
 
@@ -52,13 +106,12 @@ export class AbsPatchGenerator<T extends { images: string[] }> {
     protected imageRequired = true;
 
     constructor(config: T) {
-        const images = config?.images.filter(n => n.length) || [];
+        const images = sanitizeConfiguredImages(config?.images || []);
         this.config = {
             ...config,
             images: images.flatMap(img => {
-                // ------ online images，`https://` ------
                 // ------ data URL，`data:image/png;base64,<BASE64_ENCODED_DATA>` ------
-                if (['http', 'data:'].some(prefix => img.startsWith(prefix))) {
+                if (isDataImageSource(img)) {
                     return [img];
                 }
                 // ------ local ------
@@ -199,7 +252,7 @@ container.appendChild(div);
     }
 }
 
-export class WithoutImagesPatchGenerator extends AbsPatchGenerator<any> {
+export class WithoutImagesPatchGenerator extends AbsPatchGenerator<{ images: string[] }> {
     constructor() {
         super({ images: [] });
     }
