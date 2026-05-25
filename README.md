@@ -24,6 +24,31 @@ There are 2 ways to install this extension:
 1. Install from [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=shalldie.background).
 2. Search `shalldie.background` from vscode.
 
+## Development
+
+This repository uses `pnpm` as the package manager authority and follows a bundle-first build flow.
+
+- Runtime artifact: `dist/extension.js`
+- Uninstall hook artifact: `dist/uninstall.js`
+- VSIX artifact: `artifacts/vsix/<name>-<version>.vsix`
+- Uninstall metadata: OS user-state directory under `${publisher}.${name}`
+- Local development watch: `pnpm run watch`
+- Type check: `pnpm run typecheck`
+- Local VSIX packaging: `pnpm run package`
+
+### Build contract
+
+- `pnpm` remains the source of truth for dependency governance and supply-chain policy.
+- `esbuild` creates the runtime bundle before packaging.
+- Official `@vscode/vsce` is still used to create the VSIX.
+- Packaging runs with `--no-dependencies` because the extension is bundled first.
+- Release artifacts are written to `artifacts/vsix/`, not to the workspace root.
+- Mutable uninstall metadata is written to a stable per-user state directory, not to `dist/` or the repository root.
+
+### Why this matters
+
+`@vscode/vsce` does not officially support `pnpm` dependency analysis and falls back to `npm`-style logic. This repository avoids that unsupported path by bundling first and only packaging the resulting artifacts plus required assets.
+
 ## Custom
 
 User defined requirements can be met by changing the configuration(`settings.json`).

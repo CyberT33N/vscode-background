@@ -1,10 +1,9 @@
 import fs from 'fs';
-import { tmpdir } from 'os';
 import path from 'path';
 
 import vscode, { Disposable, l10n, Uri } from 'vscode';
 
-import { ENCODING, EXTENSION_NAME, TOUCH_JSFILE_PATH, VERSION } from '../utils/constants';
+import { ENCODING, EXTENSION_NAME, FIRST_LOAD_STATE_KEY, UNINSTALL_JS_PATH_FILE, VERSION } from '../utils/constants';
 import { vscodePath } from '../utils/vscodePath';
 import { vsHelp } from '../utils/vsHelp';
 import { CssFile } from './CssFile';
@@ -30,15 +29,15 @@ type TPromptAction = {
 export class Background implements Disposable {
     // #region fields 字段
 
+    public readonly cssFile: CssFile;
+
+    public readonly jsFile: JsPatchFile;
+
     /**
      * 老版本css文件操作对象
      *
      * @memberof Background
      */
-    public cssFile = new CssFile(vscodePath.cssPath); // 没必要继承，组合就行
-
-    public jsFile = new JsPatchFile(vscodePath.jsPath);
-
     /**
      * Current config
      * 当前用户配置
@@ -60,9 +59,18 @@ export class Background implements Disposable {
      */
     private disposables: Disposable[] = [];
 
+    public constructor(private readonly context: vscode.ExtensionContext) {
+        this.cssFile = new CssFile(vscodePath.cssPath);
+        this.jsFile = new JsPatchFile(vscodePath.jsPath);
+    }
+
     // #endregion
 
     // #region private methods 私有方法
+
+    private getExtensionFsPath(...segments: string[]) {
+        return Uri.joinPath(this.context.extensionUri, ...segments).fsPath;
+    }
 
     /**
      * 检测是否初次加载
@@ -72,29 +80,34 @@ export class Background implements Disposable {
      * @memberof Background
      */
     private async checkFirstload(): Promise<boolean> {
-        const firstLoad = !fs.existsSync(TOUCH_JSFILE_PATH);
+        const firstLoad = !this.context.globalState.get<boolean>(FIRST_LOAD_STATE_KEY, false);
 
         if (firstLoad) {
-            // 标识插件已启动过
-            await fs.promises.writeFile(TOUCH_JSFILE_PATH, vscodePath.jsPath, ENCODING);
+            await this.context.globalState.update(FIRST_LOAD_STATE_KEY, true);
             return true;
         }
 
         return false;
     }
 
+    private async syncUninstallMetadata() {
+        await fs.promises.mkdir(path.dirname(UNINSTALL_JS_PATH_FILE), { recursive: true });
+        await fs.promises.writeFile(UNINSTALL_JS_PATH_FILE, vscodePath.jsPath, ENCODING);
+        await fs.promises.rm(this.getExtensionFsPath(`vscb.${VERSION}.js.touch`), { force: true });
+    }
+
     public async showWelcome() {
         // 欢迎页
-        const docDir = path.join(__dirname, '../../docs');
         const localizedDocName = /^zh/.test(vscode.env.language) ? 'welcome.zh-CN.md' : 'welcome.md';
-        const localizedDocPath = path.join(docDir, localizedDocName);
-        const docPath = fs.existsSync(localizedDocPath) ? localizedDocPath : path.join(docDir, 'welcome.md');
+        const localizedDocPath = this.getExtensionFsPath('docs', localizedDocName);
+        const defaultDocPath = this.getExtensionFsPath('docs', 'welcome.md');
+        const docPath = fs.existsSync(localizedDocPath) ? localizedDocPath : defaultDocPath;
 
         // welcome 内容
         let content = await fs.promises.readFile(docPath, ENCODING);
         // 替换图片内联为base64
-        content = content.replace(/\.\.\/images[^\")]+/g, (relativePath: string) => {
-            const imgPath = path.join(vscodePath.extRoot, 'images', relativePath);
+        content = content.replace(/\.\.\/images\/([^\")]+)/g, (_match: string, imageRelativePath: string) => {
+            const imgPath = this.getExtensionFsPath('images', imageRelativePath);
             if (!fs.existsSync(imgPath)) {
                 return '';
             }
@@ -212,6 +225,7 @@ export class Background implements Disposable {
     public async setup(): Promise<any> {
         await this.removeLegacyCssPatch(); // 移除「v1旧版本」patch
 
+        await this.syncUninstallMetadata(); // 更新外部 uninstall hook 需要的最小元数据
         await this.checkFirstload(); // 是否初次加载插件
 
         const patchType = await this.jsFile.getPatchType(); // 「js文件」目前状态

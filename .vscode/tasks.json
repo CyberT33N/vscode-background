@@ -4,16 +4,35 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "type": "npm",
-            "script": "watch",
-            "problemMatcher": "$tsc-watch",
-            "isBackground": true,
+            "label": "watch",
+            "dependsOn": ["npm: watch:typecheck", "npm: watch:bundle"],
             "presentation": {
                 "reveal": "never"
             },
             "group": {
                 "kind": "build",
                 "isDefault": true
+            }
+        },
+        {
+            "type": "npm",
+            "script": "watch:typecheck",
+            "problemMatcher": "$tsc-watch",
+            "isBackground": true,
+            "label": "npm: watch:typecheck",
+            "presentation": {
+                "group": "watch",
+                "reveal": "never"
+            }
+        },
+        {
+            "type": "npm",
+            "script": "watch:bundle",
+            "isBackground": true,
+            "label": "npm: watch:bundle",
+            "presentation": {
+                "group": "watch",
+                "reveal": "never"
             }
         }
     ]

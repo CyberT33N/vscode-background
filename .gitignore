@@ -3,6 +3,7 @@ dist
 node_modules
 .npmrc
 auth.ini
+artifacts/
 .vscode-test/
 *.vsix
 .DS_Store
@@ -10,5 +11,6 @@ auth.ini
 *.touch
 *.cache
 .idea
+.pnpm
 
 .comate

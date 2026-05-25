@@ -22,7 +22,7 @@ function getStatusbar() {
 }
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
-    const background = new Background();
+    const background = new Background(context);
 
     context.subscriptions.push(background);
     const ok = await background.setup();

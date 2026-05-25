@@ -13,11 +13,11 @@
 import fs from 'fs';
 
 import { JsPatchFile } from './background/PatchFile/PatchFile.javascript';
-import { ENCODING, TOUCH_JSFILE_PATH } from './utils/constants';
+import { ENCODING, UNINSTALL_JS_PATH_FILE } from './utils/constants';
 
 async function uninstall() {
     try {
-        const jsFilePath = (await fs.promises.readFile(TOUCH_JSFILE_PATH, ENCODING)).trim();
+        const jsFilePath = (await fs.promises.readFile(UNINSTALL_JS_PATH_FILE, ENCODING)).trim();
         if (!jsFilePath) {
             return;
         }

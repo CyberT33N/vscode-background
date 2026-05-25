@@ -22,11 +22,19 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version-file: ".node-version"
+          cache: "pnpm"
+          cache-dependency-path: "pnpm-lock.yaml"
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Activate pnpm
+        run: corepack prepare pnpm@11.2.2 --activate
 
       # validate compile、package
-      - run: npm ci
-      - run: npm run package
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run package
       - uses: actions/upload-artifact@v6
         with:
           name: build-artifact
-          path: "*.vsix"
+          path: "artifacts/vsix/*.vsix"

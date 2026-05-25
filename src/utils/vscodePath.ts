@@ -44,10 +44,6 @@ export const vscodePath = {
      */
     base,
     /**
-     * 扩展根目录
-     */
-    extRoot: path.join(__dirname, '../../'),
-    /**
      * css文件路径
      */
     cssPath,

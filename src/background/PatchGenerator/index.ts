@@ -1,5 +1,3 @@
-import uglifyjs from 'uglify-js';
-
 import { _ } from '../../utils';
 import { AuxiliarybarPatchGenerator, AuxiliarybarPatchGeneratorConfig } from './PatchGenerator.auxiliarybar';
 import { findUnsupportedImageSources } from './PatchGenerator.base';
@@ -53,7 +51,9 @@ export class PatchGenerator {
             .map(n => _.withIIFE(n))
             .join(';');
 
-        // return script;
-        return uglifyjs.minify(script).code;
+        // Runtime minification is intentionally avoided here.
+        // The generated patch code is dynamic and correctness is more important
+        // than keeping a bundler-hostile minifier in the runtime path.
+        return script;
     }
 }

@@ -88,10 +88,12 @@ strictDepBuilds: true
 # Example: `esbuild: true` allows `esbuild` later, `core-js: false` forbids `core-js`.
 #
 # Project exception note:
-# We WANT to continue building the VSIX file locally in this repository.
-# For that, we keep `@vscode/vsce` and explicitly allow the
-# `@vscode/vsce-sign` build path it uses.
+# We WANT to continue building the VSIX file locally in this repository
+# with a bundle-first workflow.
+# For that, we explicitly allow `esbuild` for bundling and the
+# `@vscode/vsce-sign` build path used by the official `@vscode/vsce` packager.
 allowBuilds:
+  esbuild: true
   '@vscode/vsce-sign': true
 
 # `dangerouslyAllowAllBuilds`
@@ -177,6 +179,22 @@ resolutionMode: time-based
 # deliver the required `time` field.
 # Example: Verdaccio or an internal proxy is only set to `true` after verification.
 registrySupportsTimeField: false
+
+# `saveExact`
+# Simple: Saves newly added dependency versions as exact versions instead of ranges.
+# Details: This prevents caret or tilde ranges from being written during `pnpm add`
+# and keeps newly introduced dependencies pinned to an explicitly approved version.
+# In combination with `saveWorkspaceProtocol` and `savePrefix: ""`, the saved spec
+# remains explicit, non-drifting, and reviewable.
+# Example: `pnpm add lodash@4.17.21` writes `4.17.21` instead of `^4.17.21`.
+saveExact: true
+
+# `savePrefix`
+# Simple: Defines the version prefix for newly saved specs.
+# Details: An empty string keeps the serialized spec prefix-free and reinforces
+# the exact-version save policy established by `saveExact: true`.
+# Example: `1.2.3` instead of `^1.2.3`.
+savePrefix: ""
 
 ########################################
 # Dependency layout and anti-hoisting
@@ -325,3 +343,29 @@ enablePrePostScripts: false
 # Details: `error` prevents working with stale `node_modules`.
 # Example: After a manifest change, `pnpm test` blocks until install is run again.
 verifyDepsBeforeRun: error
+
+catalog:
+  '@ianvs/prettier-plugin-sort-imports': 4.7.1
+  '@secretlint/secretlint-formatter-sarif': 10.2.2
+  '@secretlint/secretlint-rule-basicauth': 10.2.2
+  '@secretlint/secretlint-rule-no-dotenv': 10.2.2
+  '@secretlint/secretlint-rule-npm': 10.2.2
+  '@secretlint/secretlint-rule-preset-recommend': 10.2.2
+  '@secretlint/secretlint-rule-privatekey': 10.2.2
+  '@types/node': 24.12.4
+  '@types/stylis': 4.2.7
+  '@types/vscode': 1.120.0
+  '@typescript-eslint/eslint-plugin': 8.59.3
+  '@typescript-eslint/parser': 8.59.3
+  '@vscode/vsce': 3.9.1
+  '@vscode/sudo-prompt': 9.3.2
+  esbuild: 0.28.0
+  eslint: 9.39.4
+  eslint-config-prettier: 10.1.8
+  eslint-plugin-prettier: 5.5.5
+  fast-glob: 3.3.3
+  husky: 9.1.7
+  npm-run-all: 4.1.5
+  prettier: 3.8.3
+  stylis: 4.4.0
+  typescript: 5.9.3
