@@ -91,7 +91,7 @@ function stagePackagingWorkspace() {
 
     fs.writeFileSync(path.join(stageDir, 'package.json'), JSON.stringify(stagedManifest, null, 2) + '\n');
 
-    const entriesToCopy = ['dist', 'docs', 'l10n', 'README.md', 'LICENSE', 'package.nls.json', '.vscodeignore'];
+    const entriesToCopy = ['dist', 'docs', 'l10n', 'media', 'README.md', 'LICENSE', 'package.nls.json', '.vscodeignore'];
 
     for (const entry of entriesToCopy) {
         const sourcePath = path.join(rootDir, entry);

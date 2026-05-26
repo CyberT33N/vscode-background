@@ -26,7 +26,7 @@ Each section can be customized with features such as `custom images/styles`、`c
 
 ## Clear and concise configuration
 
-Each section has independent configuration, see [README.md](https://github.com/shalldie/vscode-background) to learn more.
+Each section has independent configuration, see [README.md](https://github.com/CyberT33N/vscode-background) to learn more.
 
 ```json
 {

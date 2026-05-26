@@ -1,6 +1,6 @@
 {
   "name": "background",
-  "displayName": "background",
+  "displayName": "Background [Secured]",
   "description": "Bring background images to your vscode",
   "version": "2.0.10",
   "packageManager": "pnpm@11.2.2",
@@ -29,12 +29,13 @@
     "package": "pnpm run typecheck && pnpm run bundle:prod && node ./scripts/package-vsix.cjs",
     "prepare": "husky"
   },
-  "publisher": "shalldie",
-  "author": "shalldie",
+  "publisher": "CyberT33N",
+  "author": "CyberT33N",
   "license": "MIT",
+  "icon": "media/icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/shalldie/vscode-background.git"
+    "url": "https://github.com/CyberT33N/vscode-background.git"
   },
   "engines": {
     "vscode": "^1.94.0"
@@ -81,7 +82,7 @@
     ],
     "configuration": {
       "type": "object",
-      "title": "background",
+      "title": "Background [Secured]",
       "properties": {
         "background.enabled": {
           "type": "boolean",

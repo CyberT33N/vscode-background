@@ -6,14 +6,14 @@
 
 `fullscreen`、`editor`、`sidebar`、`auxiliarybar`、`panel`、`carousel`、`custom images/styles`...
 
-[GitHub](https://github.com/shalldie/vscode-background) | [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=shalldie.background)
+[GitHub](https://github.com/CyberT33N/vscode-background) | [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=CyberT33N.background)
 
-[![Version](https://img.shields.io/visual-studio-marketplace/v/shalldie.background?logo=visualstudiocode&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=shalldie.background)
-[![Installs](https://img.shields.io/visual-studio-marketplace/i/shalldie.background?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=shalldie.background)
-[![Ratings](https://img.shields.io/visual-studio-marketplace/r/shalldie.background?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=shalldie.background)
-[![Stars](https://img.shields.io/github/stars/shalldie/vscode-background?logo=github&style=flat-square)](https://github.com/shalldie/vscode-background)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/shalldie/vscode-background/ci.yml?branch=master&label=build&style=flat-square)](https://github.com/shalldie/vscode-background/actions)
-[![License](https://img.shields.io/github/license/shalldie/vscode-background?style=flat-square)](https://github.com/shalldie/vscode-background)
+[![Version](https://img.shields.io/visual-studio-marketplace/v/CyberT33N.background?logo=visualstudiocode&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=CyberT33N.background)
+[![Installs](https://img.shields.io/visual-studio-marketplace/i/CyberT33N.background?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=CyberT33N.background)
+[![Ratings](https://img.shields.io/visual-studio-marketplace/r/CyberT33N.background?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=CyberT33N.background)
+[![Stars](https://img.shields.io/github/stars/CyberT33N/vscode-background?logo=github&style=flat-square)](https://github.com/CyberT33N/vscode-background)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/CyberT33N/vscode-background/ci.yml?branch=master&label=build&style=flat-square)](https://github.com/CyberT33N/vscode-background/actions)
+[![License](https://img.shields.io/github/license/CyberT33N/vscode-background?style=flat-square)](https://github.com/CyberT33N/vscode-background)
 
 </div>
 
@@ -21,8 +21,8 @@
 
 There are 2 ways to install this extension:
 
-1. Install from [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=shalldie.background).
-2. Search `shalldie.background` from vscode.
+1. Install from [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=CyberT33N.background).
+2. Search `CyberT33N.background` from vscode.
 
 ## Development
 
@@ -53,7 +53,7 @@ This repository uses `pnpm` as the package manager authority and follows a bundl
 
 User defined requirements can be met by changing the configuration(`settings.json`).
 
-[what's `settings.json`](https://code.visualstudio.com/docs/getstarted/settings#_settingsjson) | [where?](https://github.com/shalldie/vscode-background/issues/274)
+[what's `settings.json`](https://code.visualstudio.com/docs/getstarted/settings#_settingsjson) | [where?](https://github.com/CyberT33N/vscode-background/issues/274)
 
 ## Config
 
@@ -174,7 +174,7 @@ Contributing guide content is not included in this workspace snapshot.
 
 ## Change Log
 
-You can checkout all our changes in our [CHANGELOG](https://github.com/shalldie/vscode-background/blob/master/CHANGELOG.md).
+You can checkout all our changes in our [CHANGELOG](https://github.com/CyberT33N/vscode-background/blob/master/CHANGELOG.md).
 
 ## Share Your Images
 

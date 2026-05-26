@@ -55,13 +55,13 @@ three ways:
 
 ## Unsupported environment
 
-- `Installed by snap` is not supported. [#382](https://github.com/shalldie/vscode-background/issues/382)
+- `Installed by snap` is not supported. [#382](https://github.com/CyberT33N/vscode-background/issues/382)
   - Error: (Linux) snap: read-only file system
   - Snap use SquashFS to storage packages, which is a compressed readonly file system.
 - `vscodium` is not fully supported.
   - It works fine in most cases. But I don't use it that much, pr welcome.
 
-## VSCode crashes [#306](https://github.com/shalldie/vscode-background/issues/306)
+## VSCode crashes [#306](https://github.com/CyberT33N/vscode-background/issues/306)
 
 Whenever there is an extreme situation where vscode crashes, you can manually fix it as follows:
 

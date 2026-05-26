@@ -7,7 +7,7 @@ labels: question
 
 ## Summary | 概述
 
-I have already searched [GitHub Issues](https://github.com/shalldie/vscode-background/issues), ...
+I have already searched [GitHub Issues](https://github.com/CyberT33N/vscode-background/issues), ...
 
 ### Versions
 
