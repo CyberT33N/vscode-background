@@ -44,6 +44,13 @@ minimumReleaseAgeStrict: true
 # Example: `[]` signals that there are no approved immediate exceptions.
 minimumReleaseAgeExclude: []
 
+# `allowedDeprecatedVersions`
+# Simple: Defines explicit exceptions for deprecated package versions.
+# Details: The Fortress baseline keeps this map explicitly empty, so deprecated
+# versions are not silently approved via implicit defaults.
+# Example: `{}` means no deprecated version is approved.
+allowedDeprecatedVersions: {}
+
 # `trustPolicy`
 # Simple: Blocks versions whose trust level has decreased compared to previous releases.
 # Details: This reduces the risk of accidentally accepting a less trustworthy
@@ -105,6 +112,14 @@ dangerouslyAllowAllBuilds: false
 ########################################
 # Registry and transport trust
 ########################################
+
+# `registries`
+# Simple: Pins the approved default package source.
+# Details: In the absence of a reviewed internal registry, the official npm
+# registry over HTTPS is the explicit fallback.
+# Example: New resolutions use `https://registry.npmjs.org/` as the default source.
+registries:
+  default: https://registry.npmjs.org/
 
 # `strictSsl`
 # Simple: Enforces TLS certificate verification for registry access.
@@ -288,6 +303,14 @@ strictPeerDependencies: true
 peerDependencyRules:
   ignoreMissing: []
   allowAny: []
+  allowedVersions: {}
+
+# `packageExtensions`
+# Simple: Defines explicit local manifest patches for third-party packages.
+# Details: The Fortress baseline keeps this map explicitly empty so that no
+# hidden compatibility patching is applied without review.
+# Example: `{}` means there are currently no approved manifest extensions.
+packageExtensions: {}
 
 # `overrides`
 # Simple: Allows later, targeted transitive pins or removals.
